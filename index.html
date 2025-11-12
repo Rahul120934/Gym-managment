@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gym Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 40px;
+      text-align: center;
+    }
+    .role-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .role-card {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      border: 2px solid #00ff88;
+      min-width: 200px;
+    }
+    .role-card h3 {
+      color: #00ff88;
+      margin-bottom: 15px;
+    }
+    .role-card button {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Gym Management System</h1>
+    <p>Your fitness journey starts here!</p>
+    
+    <div class="role-buttons">
+      <div class="role-card">
+        <h3>Manager</h3>
+        <p>Admin Dashboard</p>
+        <a href="manager/login.html"><button>Manager Login</button></a>
+      </div>
+      
+      <div class="role-card">
+        <h3>Trainer</h3>
+        <p>Manage Trainees</p>
+        <a href="trainer/login.html"><button>Trainer Login</button></a>
+      </div>
+      
+      <div class="role-card">
+        <h3>Trainee</h3>
+        <p>Track Your Progress</p>
+        <a href="login.html"><button>Trainee Login</button></a>
+        <a href="register.html"><button>Register</button></a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
