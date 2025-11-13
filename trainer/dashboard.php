@@ -1,21 +1,38 @@
 <?php
+// start session
 session_start();
-include '../db.php';
 
+// connect to server and database
+$conn = mysqli_connect("localhost", "root", "", "gym_management");
+
+// check session
 if (!isset($_SESSION['trainer_id'])) {
   header("Location: login.html");
   exit();
 }
 
+// check connection
+if(!$conn) {
+  echo "connection failed";
+  exit();
+}
+
+// get trainer info from session
 $trainer_id = $_SESSION['trainer_id'];
 $trainer_name = $_SESSION['trainer_name'];
 
-// Get all trainees
+// get trainees list
 $trainees_query = "SELECT * FROM trainees ORDER BY trainee_id DESC";
 $trainees_result = mysqli_query($conn, $trainees_query);
 
-// Count total trainees
-$total_trainees = mysqli_num_rows($trainees_result);
+// count total trainees
+$total_trainees = 0;
+if($trainees_result) {
+  $total_trainees = mysqli_num_rows($trainees_result);
+}
+
+// close connection (results will still be available)
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>

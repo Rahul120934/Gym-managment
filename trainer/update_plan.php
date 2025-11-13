@@ -1,36 +1,61 @@
 <?php
+// start session
 session_start();
-include '../db.php';
 
+// connect to server and database
+$conn = mysqli_connect("localhost", "root", "", "gym_management");
+
+// check session
 if (!isset($_SESSION['trainer_id'])) {
   header("Location: login.html");
   exit();
 }
 
-$trainee_id = $_GET['id'] ?? null;
+// check connection
+if(!$conn) {
+  echo "connection failed";
+  exit();
+}
 
-if (!$trainee_id) {
+// get trainee id from query string
+$trainee_id = isset($_GET['id']) ? $_GET['id'] : null;
+
+// if id not provided, go back to dashboard
+if(!$trainee_id) {
   header("Location: dashboard.php");
   exit();
 }
 
-// Get trainee details
+// get trainee details
 $query = "SELECT * FROM trainees WHERE trainee_id = $trainee_id";
 $result = mysqli_query($conn, $query);
 $trainee = mysqli_fetch_assoc($result);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// handle form submit
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+  // fetch form data
   $training_plan = $_POST['training_plan'];
-  
+
+  // execute update query
   $sql = "UPDATE trainees SET training_plan = '$training_plan' WHERE trainee_id = $trainee_id";
-  
-  if (mysqli_query($conn, $sql)) {
+  $r = mysqli_query($conn, $sql);
+
+  // optional: log update
+  $fp = fopen("../log.txt","a");
+  fwrite($fp, "plan_updated_for_trainee_id: " . $trainee_id . "\n");
+  fclose($fp);
+
+  // display output / redirect
+  if($r) {
     header("Location: dashboard.php?success=plan_updated");
     exit();
   } else {
-    $error = "Error: " . mysqli_error($conn);
+    $error = "Error: update failed";
   }
 }
+
+// close connection (HTML uses $trainee)
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -72,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Update Training Plan for <?php echo $trainee['name']; ?></h2>
     
     <?php if (isset($error)): ?>
-      <p style="color: #ff4444;"><?php echo $error; ?></p>
+      <p style="color: #ff4444;">&nbsp;<?php echo $error; ?></p>
     <?php endif; ?>
     
     <form method="POST">

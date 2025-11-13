@@ -1,30 +1,55 @@
 <?php
+// start session
 session_start();
-include '../db.php';
 
+// connect to server and database
+$conn = mysqli_connect("localhost", "root", "", "gym_management");
+
+// check session
 if (!isset($_SESSION['manager_id'])) {
   header("Location: login.html");
   exit();
 }
 
+// check connection
+if(!$conn) {
+  echo "connection failed";
+  exit();
+}
+
+// get manager name
 $manager_name = $_SESSION['manager_name'];
 
-// Get total counts
-$trainers_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM trainer"))['count'];
-$trainees_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM trainees"))['count'];
-$payments_total = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(amount) as total FROM payment"))['total'] ?? 0;
+// get counts
+$q_trainer_count = "SELECT COUNT(*) as count FROM trainer";
+$r_trainer_count = mysqli_query($conn, $q_trainer_count);
+$trainers_count_row = mysqli_fetch_assoc($r_trainer_count);
+$trainers_count = $trainers_count_row ? $trainers_count_row['count'] : 0;
 
-// Get all trainers
+$q_trainee_count = "SELECT COUNT(*) as count FROM trainees";
+$r_trainee_count = mysqli_query($conn, $q_trainee_count);
+$trainees_count_row = mysqli_fetch_assoc($r_trainee_count);
+$trainees_count = $trainees_count_row ? $trainees_count_row['count'] : 0;
+
+$q_pay_total = "SELECT SUM(amount) as total FROM payment";
+$r_pay_total = mysqli_query($conn, $q_pay_total);
+$payments_total_row = mysqli_fetch_assoc($r_pay_total);
+$payments_total = $payments_total_row && $payments_total_row['total'] ? $payments_total_row['total'] : 0;
+
+// get all trainers
 $trainers_query = "SELECT * FROM trainer";
 $trainers_result = mysqli_query($conn, $trainers_query);
 
-// Get all trainees
+// get all trainees
 $trainees_query = "SELECT * FROM trainees";
 $trainees_result = mysqli_query($conn, $trainees_query);
 
-// Get recent payments
+// get recent payments with trainee names
 $payments_query = "SELECT p.*, t.name FROM payment p JOIN trainees t ON p.trainee_id = t.trainee_id ORDER BY p.payment_id DESC LIMIT 10";
 $payments_result = mysqli_query($conn, $payments_query);
+
+// close connection (results will still be available)
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>

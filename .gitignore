@@ -1,22 +1,21 @@
-# Ignore system files
+# System files
 .DS_Store
 Thumbs.db
 
-# Ignore logs
+# Logs
 *.log
 logs/
+log.txt
 
-# Ignore temporary files
+# Temp files
 *.tmp
 *.temp
-
-# Ignore IDE files
-.vscode/
-.idea/
-
-# Ignore backup files
 *.bak
 *~
+
+# IDE
+.vscode/
+.idea/
 
 # Ignore database connection file (if you want to keep credentials private)
 # Uncomment the line below if you want to exclude db.php

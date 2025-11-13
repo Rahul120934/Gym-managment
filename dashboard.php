@@ -1,21 +1,39 @@
 <?php
+// start session
 session_start();
-include 'db.php';
+
+// check session
 if (!isset($_SESSION['email'])) {
   header("Location: login.html");
   exit();
 }
 
+// connect to server and database
+$conn = mysqli_connect("localhost", "root", "", "gym_management");
+
+// check connection
+if(!$conn) {
+  echo "connection failed";
+  exit();
+}
+
+// get logged in user email
 $email = $_SESSION['email'];
+
+// execute query to fetch trainee details
 $sql = "SELECT * FROM trainees WHERE email='$email'";
 $result = mysqli_query($conn, $sql);
 $user = mysqli_fetch_assoc($result);
 
+// calculate BMI
 $bmi = 0;
-if ($user['height'] > 0) {
+if ($user && $user['height'] > 0) {
   $height_m = $user['height'] / 100;
   $bmi = round($user['weight'] / ($height_m * $height_m), 2);
 }
+
+// close connection (HTML will use $user and $bmi)
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
